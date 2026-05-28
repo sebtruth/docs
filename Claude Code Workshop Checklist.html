@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Leadership Workshop – Claude Code Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #4a4a6a;
+    --ink-muted: #8888aa;
+    --page: #f9f7f2;
+    --surface: #ffffff;
+    --border: #e2dfd8;
+    --accent: #3d2fa0;
+    --accent-light: #ede9ff;
+    --accent-mid: #7b6de8;
+    --teal: #0f6e56;
+    --teal-light: #e1f5ee;
+    --amber: #ba7517;
+    --amber-light: #faeeda;
+    --coral: #993c1d;
+    --coral-light: #faece7;
+    --green: #3b6d11;
+    --green-light: #eaf3de;
+    --tag-blue: #0c447c;
+    --tag-blue-bg: #e6f1fb;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: var(--ink);
+    color: var(--page);
+    padding: 3.5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.018) 40px,
+      rgba(255,255,255,0.018) 41px
+    );
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.2;
+    color: #f9f7f2;
+    max-width: 640px;
+    margin: 0 auto 1rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-mid);
+  }
+  .hero-sub {
+    font-size: 14px;
+    color: rgba(249,247,242,0.55);
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: var(--border);
+  }
+
+  /* ── PHASE BLOCK ── */
+  .phase {
+    margin-bottom: 2.5rem;
+  }
+  .phase-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 1.25rem;
+  }
+  .phase-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent-mid);
+    background: var(--accent-light);
+    border-radius: 4px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .phase-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+
+  /* ── CHECKLIST ITEM ── */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 1rem 1.25rem;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item:hover { background: #faf9f7; }
+  .check-item.checked { background: var(--teal-light); }
+  .check-item.checked .check-label { color: var(--teal); }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .check-item.checked .checkbox {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .checkbox-tick {
+    display: none;
+    width: 10px;
+    height: 10px;
+  }
+  .check-item.checked .checkbox-tick { display: block; }
+
+  .check-content { flex: 1; min-width: 0; }
+  .check-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .check-detail {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    margin-top: 3px;
+    line-height: 1.55;
+  }
+  .check-detail a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--ink);
+    color: #c0b8ff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── COMMAND BLOCK ── */
+  .cmd-block {
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.15s;
+  }
+  .cmd-block:hover { opacity: 0.88; }
+  .cmd-prompt {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-mid);
+    flex-shrink: 0;
+  }
+  .cmd-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #e8e4ff;
+    flex: 1;
+    word-break: break-all;
+  }
+  .cmd-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+  .cmd-block:hover .cmd-copy { color: rgba(255,255,255,0.7); }
+  .cmd-block.copied .cmd-copy { color: #5dcaa5; }
+
+  /* ── NOTE CARD ── */
+  .note {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 0.75rem;
+  }
+  .note.info {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 0.5px solid #c8c0f5;
+  }
+  .note.tip {
+    background: var(--amber-light);
+    color: var(--amber);
+    border: 0.5px solid #f5d9a0;
+  }
+  .note.success {
+    background: var(--teal-light);
+    color: var(--teal);
+    border: 0.5px solid #9fe1cb;
+  }
+  .note-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .note a { color: inherit; font-weight: 500; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 4px;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    text-align: right;
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 2rem 0; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    border-top: 0.5px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="hero-eyebrow">Product Leadership Workshop · Setup Guide</p>
+  <h1>Getting ready for <em>Claude Code</em> –<br>Your checklist</h1>
+  <p class="hero-sub">Please complete before the workshop · Heads of Product</p>
+</div>
+
+<div class="container">
+
+  <p class="progress-label" id="prog-label">0 of 10 completed</p>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="prog-bar"></div>
+  </div>
+
+  <!-- ───────────────────────────────── PHASE 1 ── -->
+  <div class="phase">
+    <div class="section-label">Phase 1</div>
+    <div class="phase-header">
+      <span class="phase-num">01</span>
+      <span class="phase-title">Prerequisites</span>
+    </div>
+
+    <ul class="checklist" id="list-1">
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Comfortable using a terminal</p>
+          <p class="check-detail">You should be able to run basic terminal commands — navigating directories, copying and pasting, etc.</p>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">GitLab account active</p>
+          <p class="check-detail">You have access to <a href="https://gitlab.real-digital.de" target="_blank">gitlab.real-digital.de</a> using your company credentials.</p>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Claude Code installed</p>
+          <p class="check-detail">Claude Code is set up on your machine and ready to use.</p>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Claude Skill plugin installed</p>
+          <p class="check-detail">
+            Install the plugin from the internal marketplace:
+            <a href="https://gitlab.real-digital.de/public-repos/agent-plugin-marketplace" target="_blank">gitlab.real-digital.de/public-repos/agent-plugin-marketplace</a>
+          </p>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">SSH key configured for GitLab</p>
+          <p class="check-detail">An SSH key is added to your GitLab profile so that <code>git clone</code> works without authentication issues.</p>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- ───────────────────────────────── PHASE 2 ── -->
+  <div class="phase">
+    <div class="section-label">Phase 2</div>
+    <div class="phase-header">
+      <span class="phase-num">02</span>
+      <span class="phase-title">Align with your team – project preparation</span>
+    </div>
+
+    <ul class="checklist">
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Suitable project identified with your team</p>
+          <p class="check-detail">Discuss with your teams which projects are ready to use — <strong>onecommand</strong> support is required.</p>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Service names and Git repositories identified</p>
+          <p class="check-detail">
+            Use the service name (e.g. <code>seller-portal.frontend.app</code>) to determine which repository to clone. Naming conventions are documented in the <strong>Handbook</strong>.
+          </p>
+          <div class="note tip">
+            <span class="note-icon">💡</span>
+            <span>The service name tells you directly where to start. Refer to the Handbook for the official naming schema.</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Use case for the workshop defined</p>
+          <p class="check-detail">Your use case is clearly scoped and specific enough to be implemented directly in Claude Code during the session.</p>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <!-- ───────────────────────────────── PHASE 3 ── -->
+  <div class="phase">
+    <div class="section-label">Phase 3</div>
+    <div class="phase-header">
+      <span class="phase-num">03</span>
+      <span class="phase-title">During the workshop – steps in Claude Code</span>
+    </div>
+
+    <div class="note info" style="margin-bottom: 1rem;">
+      <span class="note-icon">ℹ️</span>
+      <span>These steps will be completed live during the workshop — no action required beforehand. They are listed here for reference and orientation.</span>
+    </div>
+
+    <ul class="checklist">
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Clone the repository</p>
+          <p class="check-detail">Clone the relevant Git repository via SSH:</p>
+          <div class="cmd-block" onclick="copyCmd(event, this, 'git clone git@gitlab.real-digital.de:YOUR_PROJECT/repo-name.git')">
+            <span class="cmd-prompt">$</span>
+            <span class="cmd-text">git clone git@gitlab.real-digital.de:YOUR_PROJECT/repo-name.git</span>
+            <span class="cmd-copy">copy</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="check-item" onclick="toggle(this)">
+        <div class="checkbox">
+          <svg class="checkbox-tick" viewBox="0 0 10 10" fill="none">
+            <polyline points="1.5,5 4,7.5 8.5,2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="check-content">
+          <p class="check-label">Deploy the repository to the sandbox</p>
+          <p class="check-detail">Sync the cloned repository to the sandbox environment:</p>
+          <div class="cmd-block" onclick="copyCmd(event, this, 'sandbox deploy__sync')">
+            <span class="cmd-prompt">$</span>
+            <span class="cmd-text">sandbox deploy__sync</span>
+            <span class="cmd-copy">copy</span>
+          </div>
+          <div class="note success" style="margin-top: 0.75rem;">
+            <span class="note-icon">✅</span>
+            <span>Once deployed, the frontend is accessible via the browser URL in your development environment.</span>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+  <div class="note info">
+    <span class="note-icon">🔄</span>
+    <span>Need <strong>additional services</strong>? Simply repeat the steps in Phase 3 — clone the repository, deploy, done.</span>
+  </div>
+
+  <hr>
+
+  <div style="text-align: center; padding: 1.5rem 0 0.5rem;">
+    <p style="font-family: var(--mono); font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em;">Questions? · ProductOps Team · Slack <code>#product-ops</code></p>
+  </div>
+
+</div>
+
+<div class="footer">
+  PRODUCT LEADERSHIP WORKSHOP &nbsp;·&nbsp; CLAUDE CODE SETUP &nbsp;·&nbsp; INTERNAL USE ONLY
+</div>
+
+<script>
+  const TOTAL = document.querySelectorAll('.check-item').length;
+
+  function toggle(el) {
+    if (el.tagName === 'DIV' && el.classList.contains('cmd-block')) return;
+    el.classList.toggle('checked');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const done = document.querySelectorAll('.check-item.checked').length;
+    const pct = Math.round((done / TOTAL) * 100);
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-label').textContent = done + ' of ' + TOTAL + ' completed';
+  }
+
+  function copyCmd(evt, el, text) {
+    evt.stopPropagation();
+    navigator.clipboard.writeText(text).then(() => {
+      el.classList.add('copied');
+      el.querySelector('.cmd-copy').textContent = 'copied ✓';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('.cmd-copy').textContent = 'copy';
+      }, 2000);
+    });
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
